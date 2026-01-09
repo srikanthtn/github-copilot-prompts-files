@@ -1,8 +1,8 @@
 ---
 name: SEPA Spark Unit Test Generator (CSV Driven)
 version: 1.0
-description: Generates deterministic, audit-grade unit tests for a Scala 2.13 Spark 4.1 SEPA application using an existing CSV dataset
-model: gpt-4.1
+description: Generates deterministic, audit-grade unit tests for this Scala 2.13.17 / Spark 4.1.0 SEPA application using the bundled CSV dataset
+model: gpt-5.2
 ---
 
 @context
@@ -33,7 +33,7 @@ The tests must:
 ---
 
 @language_constraints
-- Scala version: 2.13 ONLY
+- Scala version: 2.13.17 ONLY
 - No Scala 3 syntax
 - Tests must be inside classes or objects
 - Use standard ScalaTest style
@@ -44,8 +44,9 @@ The tests must:
 The dataset already exists and MUST be used.
 
 Dataset rules:
-- Location: src/main/resources/data/*.csv
-- Must be loaded via ClassLoader
+- Repo location: src/main/Resources/data/MOCK_DATA_1.csv
+- Runtime location: classpath resource `data/MOCK_DATA_1.csv`
+- Must be loaded via ClassLoader `getResource` / `getResourceAsStream`
 - Schema must match production schema
 - No dataset generation or mutation allowed
 

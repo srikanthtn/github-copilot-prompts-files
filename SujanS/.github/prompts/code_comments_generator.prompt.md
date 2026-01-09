@@ -1,8 +1,8 @@
 ---
 name: SEPA Spark Code Comments Generator
 version: 1.0
-description: Generates audit-grade ScalaDoc comments for a Scala 2.13 Spark 4.1 SEPA application using a real CSV dataset
-model: gpt-4.1
+description: Generates audit-grade ScalaDoc comments for this Scala 2.13.17 / Spark 4.1.0 SEPA application using the bundled CSV dataset
+model: gpt-5.2
 ---
 
 @context
@@ -34,7 +34,7 @@ You must NOT change program logic.
 ---
 
 @language_constraints
-- Scala version: 2.13 ONLY
+- Scala version: 2.13.17 ONLY
 - Use ScalaDoc format (`/** ... */`)
 - No Scala 3 syntax
 - No inline or redundant comments

@@ -2,7 +2,7 @@
 name: SEPA Spark SonarQube Coverage & Quality Gate Generator
 version: 1.0
 description: Configures, executes, and evaluates SonarQube analysis and coverage for a Scala 2.13 Spark 4.1 SEPA application
-model: gpt-4.1
+model: gpt-5.2
 ---
 
 @context
@@ -28,12 +28,12 @@ The analysis must reflect the REAL code and REAL tests.
 ---
 
 @technology_constraints
-- Scala version: 2.13 ONLY
-- Spark version: 4.1
-- Build tool: sbt
+- Scala version: 2.13.17 ONLY
+- Spark version: 4.1.0
+- Build tool: sbt 1.12.0
 - Test framework: ScalaTest
 - Coverage tool: scoverage
-- Static analysis: SonarQube (sonar-scanner or sbt-sonar)
+- Static analysis: SonarQube via SonarScanner CLI using `sonar-project.properties`
 
 ---
 
@@ -116,9 +116,8 @@ You must:
 1. Configure scoverage for sbt
 2. Configure SonarQube properties
 3. Execute:
-   - sbt clean test coverage
-   - sbt coverageReport
-   - SonarQube analysis
+  - sbt clean coverage test coverageReport
+  - sonar-scanner (using `sonar-project.properties`)
 4. Parse SonarQube results
 5. Determine quality gate status
 
