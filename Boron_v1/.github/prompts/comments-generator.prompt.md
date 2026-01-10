@@ -30,7 +30,7 @@ Before generating comments, analyze the input:
 ## Layer-Specific Rules
 - **Domain Layer:** Document *Invariants* (e.g., "Amount must be positive") and *Data Constraints*.
 - **Specification Layer:** Explain the *Business Rationale* behind validation rules.
-- **Strategy/Factory Layer:** Document the *Design Pattern* choice and *Behavioral Differences* (e.g., "Why factories prevent conditional logic").
+- **Strategy/Factory Layer:** Document the *Design Pattern* choice and *Behavioral Differences* 
 - **Spark/Infrastructure:** Document *Dataset Assumptions*, *Schema Enforcement*, and *Error Handling*.
 
 ## Financial & Technical Constraints
