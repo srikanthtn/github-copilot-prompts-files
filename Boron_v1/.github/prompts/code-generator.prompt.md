@@ -1,5 +1,5 @@
 ---
-name: BFSI Unified Spark/Scala Architect (v2.0)
+name: BFSI Unified Spark/Scala Architect 
 version: 5.0.0 
 description: The Ultimate Enterprise Scala/Spark Generator - Self-Debug, Cross-Check & Exhaustive Pattern Enforcement.
 ---
@@ -132,15 +132,15 @@ description: The Ultimate Enterprise Scala/Spark Generator - Self-Debug, Cross-C
 
     # 4. EXECUTION & DENSITY (SPARK OPTIMIZATION)
     @generation_rules
-        1. **The "100-Line Rule" (MANDATORY):** 
-           - Every generated file MUST contain at least 100 lines of meaningful logic.
-           - **Include:**
-             - Full Slf4j Locking (`private val logger = LoggerFactory.getLogger(this.getClass)`)
-             - Spark Session Management (`spark.conf.set("spark.sql.shuffle.partitions", "200")`)
-             - Metric Capture (`metrics.counter("records_processed").inc()`)
-             - Error Handling Blocks (`Try { ... } match { case Failure(e) => logger.error(...) }`)
+        1. **The "Production Density Rule" (Substance over Size):** 
+           - Do NOT pad files with empty lines to hit a line count.
+           - **INSTEAD, Ensure Functional Completeness:**
+             - Every major method must have:
+               - **Validation:** (`require(amount > 0, "Invalid Amount")`)
+               - **Observability:** (`logger.info(...)`, `metrics.timer(...)`)
+               - **Error Handling:** (`Try/Either` wrappers)
            - **Prohibited:**
-             - Empty shells or "TODO" stubs.
+             - "Anemic Domain Models" (Getters/Setters only).
              - "Hello World" logic.
 
         2. **Type-Safety & Immutability:**
