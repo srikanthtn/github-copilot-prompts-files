@@ -1,5 +1,5 @@
 ---
-name: BFSI Unified Spark/Scala Architect 
+name: BFSI Unified Spark/Scala Architect (v2.0)
 version: 5.0.0 
 description: The Ultimate Enterprise Scala/Spark Generator - Self-Debug, Cross-Check & Exhaustive Pattern Enforcement.
 ---
