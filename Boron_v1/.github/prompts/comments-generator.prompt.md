@@ -1,7 +1,7 @@
 ---
 description: Unified Enterprise SEPA/BFSI Code Comments Generator (Governed & Architecturally Aware)
 model: gpt-4o
-version: 3.0.0
+version: 5.0.0
 ---
 
 @prompt
@@ -172,13 +172,235 @@ version: 3.0.0
 @end
 
 ########################################################################
-# 9. OUTPUT FORMAT
+# 9. NAMING CONVENTIONS (MANDATORY ENFORCEMENT)
+########################################################################
+@naming_conventions
+    **All generated comments must reference and enforce these naming standards:**
+
+    ## 9.1 SCALA NAMING RULES
+
+    | Element | Convention | Example | Anti-Pattern |
+    |---------|------------|---------|--------------|
+    | **Package** | lowercase, dot-separated | `com.bank.payments.domain` | `Com.Bank.Payments` |
+    | **Class/Trait** | PascalCase | `SepaCreditTransfer` | `sepaCreditTransfer`, `SEPA_CREDIT` |
+    | **Object** | PascalCase | `PaymentValidator` | `paymentValidator` |
+    | **Method** | camelCase, verb-first | `validateIban()`, `processPayment()` | `ibanValidation()`, `payment()` |
+    | **Variable** | camelCase | `transactionAmount` | `TransactionAmount`, `transaction_amount` |
+    | **Constant** | PascalCase or UPPER_SNAKE | `MaxBatchSize`, `MAX_BATCH_SIZE` | `maxBatchSize` |
+    | **Type Parameter** | Single uppercase letter | `T`, `A`, `E` | `Type`, `Element` |
+    | **Boolean** | is/has/can/should prefix | `isValid`, `hasExpired` | `valid`, `expired` |
+    | **Option** | maybe/optional prefix | `maybeAccount`, `optionalIban` | `account`, `iban` |
+    | **Collection** | plural noun | `payments`, `transactions` | `paymentList`, `transactionArray` |
+
+    ## 9.2 BFSI DOMAIN NAMING RULES
+
+    | Domain Concept | Naming Pattern | Examples |
+    |----------------|----------------|----------|
+    | **Entity** | Noun (singular, domain-specific) | `CreditTransfer`, `DirectDebit`, `LedgerEntry` |
+    | **Value Object** | Noun (immutable concept) | `Money`, `Iban`, `Bic`, `Currency` |
+    | **Aggregate** | Root entity name | `PaymentAggregate`, `AccountAggregate` |
+    | **Repository** | Entity + Repository | `PaymentRepository`, `AccountRepository` |
+    | **Service** | Domain + Service | `SettlementService`, `ClearingService` |
+    | **Factory** | Entity + Factory | `PaymentFactory`, `TransactionFactory` |
+    | **Specification** | Rule + Specification | `ValidAmountSpec`, `IbanChecksumSpec` |
+    | **Strategy** | Behavior + Strategy | `RoutingStrategy`, `PricingStrategy` |
+    | **Event** | Past tense verb + Entity | `PaymentInitiated`, `TransferCompleted` |
+    | **Command** | Verb + Entity + Command | `ProcessPaymentCommand`, `CancelTransferCommand` |
+    | **Query** | Get/Find/List + Entity + Query | `GetPaymentQuery`, `ListTransactionsQuery` |
+    | **DTO** | Entity + Dto/Request/Response | `PaymentDto`, `TransferRequest` |
+    | **Exception** | Condition + Exception | `InsufficientFundsException`, `InvalidIbanException` |
+    | **Validator** | Entity + Validator | `IbanValidator`, `AmountValidator` |
+
+    ## 9.3 SPARK-SPECIFIC NAMING RULES
+
+    | Spark Element | Convention | Example |
+    |---------------|------------|---------|
+    | **Dataset** | Plural noun + Ds | `paymentsDs`, `transactionsDs` |
+    | **DataFrame** | Plural noun + Df | `paymentsDf`, `rawEventsDf` |
+    | **RDD** | Plural noun + Rdd | `paymentsRdd` |
+    | **Column** | snake_case in SQL, camelCase in code | SQL: `transaction_id`, Code: `transactionId` |
+    | **UDF** | describe + Udf | `validateIbanUdf`, `parseAmountUdf` |
+    | **Encoder** | Entity + Encoder | `implicit val paymentEncoder: Encoder[Payment]` |
+    | **Job/Pipeline** | Process + Job | `PaymentBatchJob`, `SettlementPipeline` |
+    | **Reader** | Source + Reader | `CsvPaymentReader`, `KafkaEventReader` |
+    | **Writer** | Sink + Writer | `ParquetPaymentWriter`, `DeltaLakeWriter` |
+
+    ## 9.4 METHOD NAMING PATTERNS
+
+    | Action Type | Prefix | Examples |
+    |-------------|--------|----------|
+    | **Create** | create, build, make, new | `createPayment()`, `buildTransaction()` |
+    | **Read** | get, find, fetch, load, read | `getPayment()`, `findByIban()` |
+    | **Update** | update, modify, set, change | `updateStatus()`, `setAmount()` |
+    | **Delete** | delete, remove, clear, cancel | `deletePayment()`, `cancelTransfer()` |
+    | **Validate** | validate, verify, check, ensure | `validateIban()`, `checkBalance()` |
+    | **Transform** | to, as, parse, convert, map | `toDto()`, `parseAmount()` |
+    | **Query** | is, has, can, should, exists | `isValid()`, `hasExpired()` |
+    | **Process** | process, handle, execute, run | `processPayment()`, `executeTransfer()` |
+    | **Calculate** | calculate, compute, derive | `calculateFee()`, `computeInterest()` |
+
+    ## 9.5 COMMENT ENFORCEMENT FOR NAMING
+
+    When generating comments, **FLAG** naming violations:
+    ```scala
+    // ⚠️ NAMING VIOLATION: Variable 'data' is too generic.
+    // RECOMMENDATION: Use domain-specific name like 'paymentRecords' or 'transactionBatch'.
+    val data = loadPayments()
+    ```
+
+    When generating comments, **PRAISE** good naming:
+    ```scala
+    /**
+      * Validates SEPA Credit Transfer instructions before clearing.
+      * 
+      * Method follows verb-first naming: 'validate' + Entity pattern.
+      */
+    def validateCreditTransfer(transfer: SepaCreditTransfer): ValidationResult
+    ```
+@end
+
+########################################################################
+# 10. COMMENT DENSITY & PLACEMENT RULES
+########################################################################
+@comment_density
+    **Ensure appropriate comment coverage:**
+
+    | Code Element | Required Comments | Optional Comments |
+    |--------------|-------------------|-------------------|
+    | **File Header** | ✅ Always (Copyright, Purpose) | License details |
+    | **Package Object** | ✅ Always (Package responsibility) | - |
+    | **Class/Trait/Object** | ✅ Always (Scaladoc) | Design rationale |
+    | **Public Method** | ✅ Always (@param, @return, @throws) | Performance notes |
+    | **Private Method** | ⚠️ Only if complex | - |
+    | **Case Class** | ✅ Always (Field descriptions) | Invariants |
+    | **Sealed Trait** | ✅ Always (Hierarchy purpose) | State machine docs |
+    | **Companion Object** | ✅ Always (Factory purpose) | - |
+    | **Implicit** | ✅ Always (Why implicit, scope) | - |
+    | **Magic Numbers** | ✅ Always (Business justification) | - |
+    | **Complex Expression** | ✅ Always (Step-by-step breakdown) | - |
+    | **Regex Pattern** | ✅ Always (What it matches) | Test examples |
+    | **Error Handling** | ✅ Always (Recovery strategy) | - |
+
+    **Comment-to-Code Ratio Guidelines:**
+    - **Domain Layer:** 1 comment line per 3-5 code lines (high documentation)
+    - **Application Layer:** 1 comment line per 5-8 code lines (moderate)
+    - **Infrastructure Layer:** 1 comment line per 8-10 code lines (focus on config)
+    - **Tests:** Minimal comments (test names should be self-documenting)
+@end
+
+########################################################################
+# 11. THREAD-SAFETY & CONCURRENCY DOCUMENTATION
+########################################################################
+@concurrency_docs
+    **Mandatory annotations for concurrent code:**
+
+    | Annotation | When to Use | Example |
+    |------------|-------------|---------|
+    | `@ThreadSafe` | Class designed for concurrent access | `/** @ThreadSafe - Uses immutable state only */` |
+    | `@NotThreadSafe` | Class requires external synchronization | `/** @NotThreadSafe - Caller must synchronize */` |
+    | `@GuardedBy("lock")` | Field protected by specific lock | `// @GuardedBy("balanceLock")` |
+    | `@Immutable` | Immutable class | `/** @Immutable - All fields are final vals */` |
+    | **Actor Pattern** | Document message protocol | `// Accepts: ProcessPayment, CancelPayment` |
+    | **Future/Promise** | Document execution context | `// Requires: implicit ec: ExecutionContext` |
+@end
+
+########################################################################
+# 12. ERROR HANDLING DOCUMENTATION
+########################################################################
+@error_handling_docs
+    **Document error scenarios explicitly:**
+
+    ```scala
+    /**
+      * Validates and processes a SEPA payment instruction.
+      *
+      * @param instruction The payment instruction to process.
+      * @return Right(SettlementRecord) on success, Left(PaymentError) on failure.
+      *
+      * @errors
+      *   - InvalidIbanError: IBAN checksum validation failed
+      *   - InsufficientFundsError: Debtor account balance too low
+      *   - CutOffTimeError: Payment submitted after daily cut-off
+      *   - DuplicatePaymentError: Idempotency key already processed
+      *
+      * @recovery
+      *   - InvalidIbanError: Reject and notify originator
+      *   - InsufficientFundsError: Queue for retry at next settlement window
+      *   - CutOffTimeError: Schedule for next business day
+      */
+    def processPayment(instruction: PaymentInstruction): Either[PaymentError, SettlementRecord]
+    ```
+@end
+
+########################################################################
+# 13. PERFORMANCE & OPTIMIZATION ANNOTATIONS
+########################################################################
+@performance_annotations
+    **Document performance-critical sections:**
+
+    | Annotation | Meaning | Example |
+    |------------|---------|---------|
+    | `// O(n)`, `// O(log n)` | Time complexity | `// O(n) - Linear scan of payment batch` |
+    | `// Memory: ~X MB` | Expected memory usage | `// Memory: ~100MB for 1M records` |
+    | `// Hot Path` | Performance-critical code | `// Hot Path - Called per transaction` |
+    | `// Cold Path` | Rarely executed code | `// Cold Path - Only during reconciliation` |
+    | `// Blocking` | Contains blocking I/O | `// Blocking - JDBC call, use dedicated pool` |
+    | `// Non-Blocking` | Safe for async | `// Non-Blocking - Pure transformation` |
+    | `// Cacheable` | Result can be cached | `// Cacheable - Exchange rates valid 1 hour` |
+    | `// Idempotent` | Safe to retry | `// Idempotent - Uses idempotency key` |
+
+    **Spark-Specific Performance Comments:**
+    ```scala
+    // SPARK OPTIMIZATION: Using broadcast join because 'currencies' table is < 10MB
+    // SPARK WARNING: Avoid .collect() here - dataset may exceed driver memory
+    // SPARK TUNING: Repartition by 'processing_date' before groupBy to reduce shuffle
+    ```
+@end
+
+########################################################################
+# 14. REGULATORY & COMPLIANCE ANNOTATIONS
+########################################################################
+@regulatory_annotations
+    **Link code to regulatory requirements:**
+
+    | Regulation | Annotation Pattern | Example |
+    |------------|-------------------|---------|
+    | **GDPR** | `// GDPR Art. X:` | `// GDPR Art. 17: Right to erasure - soft delete with crypto-shred` |
+    | **PSD2** | `// PSD2 Requirement:` | `// PSD2 Requirement: Strong Customer Authentication check` |
+    | **SEPA** | `// SEPA Rulebook:` | `// SEPA Rulebook 2025 §4.2: IBAN validation mandatory` |
+    | **PCI-DSS** | `// PCI-DSS Req X:` | `// PCI-DSS Req 3.4: PAN must be masked in logs` |
+    | **AML** | `// AML Rule:` | `// AML Rule: Transactions > €10k trigger screening` |
+    | **SOX** | `// SOX Control:` | `// SOX Control: Audit trail for all ledger changes` |
+
+    **Compliance Comment Template:**
+    ```scala
+    /**
+      * Performs sanctions screening against OFAC and EU consolidated list.
+      *
+      * @regulatory
+      *   - AML Directive 2018/843 (AMLD5): Mandatory screening
+      *   - OFAC 31 CFR 501: US sanctions compliance
+      *   - EU Regulation 2019/796: Cyber sanctions
+      *
+      * @audit
+      *   - All screening results are logged to immutable audit trail
+      *   - Positive matches trigger SuspiciousActivityReport generation
+      */
+    def screenAgainstSanctions(party: Party): ScreeningResult
+    ```
+@end
+
+########################################################################
+# 15. OUTPUT FORMAT
 ########################################################################
 @output
     - Return **ONLY** the valid Scala source code.
     - Include all new comments embedded in the code.
     - **NO** markdown formatting (unless required by UI).
     - **NO** conversational text ("Here is your code...").
+    - Enforce all naming conventions in generated comments.
+    - Flag naming violations with `// ⚠️ NAMING VIOLATION:` prefix.
+    - Include regulatory annotations where applicable.
 @end
 
 @end
